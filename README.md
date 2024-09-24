@@ -1,1 +1,1 @@
-# Pygame-Tutorial-Shump-GalaxyShooter
+# Pygame-Tutorial-Shmup-GalaxyShooter
