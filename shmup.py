@@ -1,6 +1,9 @@
 # Shmup
 import pygame
 import random
+from os import path
+
+img_dir = path.join(path.dirname(__file__), 'img')
 
 from pygame.sprite import Group
 
@@ -104,6 +107,9 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
+# Load all game graphics
+background = pygame.image.load(path.join(img_dir, "starfield.png")).convert()
+background_rect = background.get_rect()
 
 # Sprites, add player to sprite group
 all_sprites = pygame.sprite.Group()
@@ -156,6 +162,10 @@ while running:
 
     # Draw / render
     screen.fill(BLACK)
+
+    # Copy pixel of background to screen
+    screen.blit(background, background_rect)
+
     all_sprites.draw(screen)
 
     # After drawing, flips screen
