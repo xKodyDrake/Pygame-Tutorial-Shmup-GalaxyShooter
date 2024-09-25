@@ -8,7 +8,7 @@ img_dir = path.join(path.dirname(__file__), 'img')
 from pygame.sprite import Group
 
 # Window of game, game speed
-WIDTH = 480
+WIDTH = 800
 HEIGHT = 600
 FPS = 60
 
@@ -31,8 +31,8 @@ clock = pygame.time.Clock()
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((45, 45))
-        self.image.fill(GREEN)
+        self.image = pygame.transform.scale(player_img, (50, 38))   # Scales player model
+        self.image.set_colorkey(BLACK)                              # Removes black box around graphic
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
@@ -62,12 +62,12 @@ class Player(pygame.sprite.Sprite):
         all_sprites.add(bullet)
         bullets.add(bullet)
 
-# Class for enemy
+# Class for mob
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((30, 30))
-        self.image.fill(RED)
+        self.image = meteor_img
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         
         # Random mob spawn
@@ -93,8 +93,8 @@ class Mob(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((9, 9))
-        self.image.fill(YELLOW)
+        self.image = bullet_img
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -110,6 +110,11 @@ class Bullet(pygame.sprite.Sprite):
 # Load all game graphics
 background = pygame.image.load(path.join(img_dir, "starfield.png")).convert()
 background_rect = background.get_rect()
+player_img = pygame.image.load(path.join(img_dir, "playerShip1_green.png")).convert()
+meteor_img = pygame.image.load(path.join(img_dir, "meteorBrown_med1.png")).convert()
+bullet_img = pygame.image.load(path.join(img_dir, "laserRed16.png")).convert()
+
+
 
 # Sprites, add player to sprite group
 all_sprites = pygame.sprite.Group()
