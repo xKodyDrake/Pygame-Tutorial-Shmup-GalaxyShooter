@@ -77,7 +77,7 @@ class Mob(pygame.sprite.Sprite):
         
         # Random mob spawn
         self.rect.x = random.randrange(WIDTH - self.rect.width)
-        self.rect.y = random.randrange(-150, -100)
+        self.rect.y = random.randrange(-180, -150)
 
         # Random speed
         self.speedy = random.randrange(3, 7)
@@ -106,7 +106,7 @@ class Mob(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         
         # Randomize mob spawn when goes off bottom of screen or side
-        if self.rect.top > HEIGHT + 10 or self.rect.left < -20 or self.rect.right > WIDTH + 20:
+        if self.rect.top > HEIGHT + 10 or self.rect.left < -30 or self.rect.right > WIDTH + 30:
             self.rect.x = random.randrange(WIDTH - self.rect.width)
             self.rect.y = random.randrange(-100, -40)
             self.speedy = random.randrange(3, 7)
