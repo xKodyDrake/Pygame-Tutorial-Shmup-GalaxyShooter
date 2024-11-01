@@ -1,9 +1,12 @@
 # Shmup
+# Frozen Jam by Copyright 2008 Elle Trudgett | https://github.com/elle-trudgett - Licensed under CC BY 3.0 https://creativecommons.org/licenses/by/3.0/ | edited by qubodup
+# Art from Kenney.nl
 import pygame
 import random
 from os import path
 
 img_dir = path.join(path.dirname(__file__), 'img')
+snd_dir = path.join(path.dirname(__file__), 'snd')
 
 from pygame.sprite import Group
 
@@ -20,12 +23,27 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
-# Initialize pygame and create window
+# Initialize pygame, sounds, clock and create window
 pygame.init()
 pygame.mixer. init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Galaxy Shooter Game")
 clock = pygame.time.Clock()
+
+# Pygame searches computer for closest thinng to 'arial' font
+font_name = pygame.font.match_font('arial bold')
+
+# Draw score to screen
+def draw_text(surf, text, size, x, y):
+
+    # Create font object using name and size
+    font = pygame.font.Font(font_name, size)
+
+    # Create surface to render pixels on to (True = anti-aliasing (less jagged pixels))
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
 
 # Create player character
 class Player(pygame.sprite.Sprite):
@@ -63,6 +81,7 @@ class Player(pygame.sprite.Sprite):
         bullet= Bullet(self.rect.centerx, self.rect.top)
         all_sprites.add(bullet)
         bullets.add(bullet)
+        shoot_sound.play()
 
 # Class for mob (image_orig is used to rotate without losing pixels / data)
 class Mob(pygame.sprite.Sprite):
@@ -143,6 +162,16 @@ meteor_list = ['meteorBrown_big1.png', 'meteorBrown_big2.png', 'meteorBrown_med1
 for img in meteor_list:
     meteor_images.append(pygame.image.load(path.join(img_dir, img)).convert())
 
+# Load all game sounds
+shoot_sound = pygame.mixer.Sound(path.join(snd_dir, 'Laser.wav'))
+expl_sounds = []
+for snd in ['Expl1.wav', 'Expl2.wav', 'Expl3.wav']:
+    expl_sounds.append(pygame.mixer.Sound(path.join(snd_dir, snd)))
+
+# Background music
+pygame.mixer.music.load(path.join(snd_dir, 'frozenjam-seamlessloop.ogg'))
+pygame.mixer.music.set_volume(0.5)
+
 
 
 # Sprites, add player to sprite group
@@ -157,8 +186,11 @@ for i in range(8):
     all_sprites.add(m)
     mobs.add(m)
 
-# Initialize score and set to 0
+# Initialize score, set 0
 score = 0
+
+# Start music (loop everytime song ends)
+pygame.mixer.music.play(loops = -1)
 
 # Game loop
 running = True
@@ -186,6 +218,8 @@ while running:
     # Check if bullet hit mob, respawns on hit
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
     for hit in hits:
+        score += 50 - hit.radius     # Get more points for smaller meteors (radius = 8 == 42 pts)
+        random.choice(expl_sounds).play()
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
@@ -205,6 +239,9 @@ while running:
     screen.blit(background, background_rect)
 
     all_sprites.draw(screen)
+
+    # Location, what to print, font size, x, y
+    draw_text(screen, str(score), 18, WIDTH / 2, 10)
 
     # After drawing, flips screen
     pygame.display.flip()
